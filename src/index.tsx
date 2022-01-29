@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import styled, { DefaultTheme, ThemeProvider } from "styled-components";
 import ReactDOM from "react-dom";
 import App from "./App";
-import { lightTheme, darkTheme } from "./theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { RecoilRoot } from "recoil";
 
 const queryClient = new QueryClient();
 
@@ -15,10 +15,8 @@ const ToggleTheme = styled.div``;
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={darkTheme}>
-        <ToggleTheme>Theme</ToggleTheme>
-        <App />
-      </ThemeProvider>
+      <ToggleTheme>Theme</ToggleTheme>
+      <App />
     </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById("root")

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
-import { IHistorical } from "./Chart";
+// import { IHistorical } from "./Chart";
 import { PriceData } from "./Coin";
 
 interface PriceProps {

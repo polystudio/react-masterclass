@@ -1,3 +1,5 @@
+import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 import {
   Switch,
   Route,
@@ -7,11 +9,9 @@ import {
 } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
-import { useQuery } from "react-query";
-import { fetchCoinInfo, fetchCoinTickers } from "../api";
-import { Helmet } from "react-helmet";
 
 const Title = styled.h1`
   font-size: 48px;
@@ -47,7 +47,7 @@ const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  width: 33%;
   span:first-child {
     font-size: 10px;
     font-weight: 400;
@@ -72,32 +72,13 @@ const Tab = styled.span<{ isActive: boolean }>`
   font-size: 12px;
   font-weight: 400;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.textColor};
   a {
+    padding: 7px 0px;
     display: block;
   }
-`;
-
-const BackBtn = styled.span`
-  background-color: rgba(0, 0, 0, 0.5);
-  color: ${(props) => props.theme.textColor};
-  border-radius: 15px;
-  margin-bottom: 10px;
-
-  a {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    transition: color 0.2s ease-in;
-  }
-
-  &:hover {
-    a {
-      color: ${(props) => props.theme.accentColor};
-    }
 `;
 
 interface RouteParams {
@@ -126,7 +107,6 @@ interface InfoData {
   first_data_at: string;
   last_data_at: string;
 }
-
 export interface PriceData {
   id: string;
   name: string;
@@ -135,7 +115,6 @@ export interface PriceData {
   circulating_supply: number;
   total_supply: number;
   max_supply: number;
-
   beta_value: number;
   first_data_at: string;
   last_updated: string;
@@ -162,12 +141,13 @@ export interface PriceData {
   };
 }
 
-function Coin() {
+interface ICoinProps {}
+
+function Coin({}: ICoinProps) {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
     ["info", coinId],
     () => fetchCoinInfo(coinId)
@@ -187,9 +167,6 @@ function Coin() {
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
-      <BackBtn>
-        <Link to={"/"}> &#60; Back </Link>
-      </BackBtn>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -210,7 +187,7 @@ function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>Price:</span>
-              <span>${tickersData?.quotes.USD.price}</span>
+              <span>${tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -236,10 +213,10 @@ function Coin() {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              {!tickersLoading && tickersData ? (
+              {tickersLoading && tickersData ? (
                 <Price tickersData={tickersData} />
               ) : (
-                "Loading..."
+                <></>
               )}
             </Route>
             <Route path={`/:coinId/chart`}>
