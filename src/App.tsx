@@ -1,8 +1,13 @@
-import { createGlobalStyle, ThemeProvider } from "styled-components";
-import Router from "./Router";
-import { ReactQueryDevtools } from "react-query/devtools";
-import { darkTheme, lightTheme } from "./theme";
-import { useState } from "react";
+import { createGlobalStyle } from "styled-components";
+import ToDoList from "./components/ToDoList";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  categoriesState,
+  categoryState,
+  ICategory,
+  toDoSelector,
+  toDoState,
+} from "./atoms";
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -70,13 +75,19 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  const setCategories = useSetRecoilState<ICategory[]>(categoriesState);
+  const setToDos = useSetRecoilState(toDoState);
+  const savedCategories = JSON.parse(
+    localStorage.getItem(categoriesState.key) || "[]"
+  );
+  if (savedCategories.length > 0) setCategories(savedCategories);
+  const savedToDos = JSON.parse(localStorage.getItem(toDoState.key) || "[]");
+  setToDos(savedToDos);
+
   return (
     <>
-      <ThemeProvider theme={darkTheme}>
-        <GlobalStyle />
-        <Router />
-        <ReactQueryDevtools initialIsOpen={true} />
-      </ThemeProvider>
+      <GlobalStyle />
+      <ToDoList />
     </>
   );
 }
