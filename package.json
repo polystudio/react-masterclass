@@ -57,5 +57,5 @@
     "@types/styled-components": "^5.1.21",
     "prettier": "2.5.1"
   },
-  "homepage": "https://polystudio.gihub.io/react-masterclass"
+  "homepage": "https://polystudio.github.io/todolist"
 }
